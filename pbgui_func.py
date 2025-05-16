@@ -126,6 +126,8 @@ def get_navi_paths():
 
         "INFO_DASHBOARDS":     os.path.join(NAVI_BASE_DIR, "info_dashboards.py"),
         "INFO_COIN_DATA":      os.path.join(NAVI_BASE_DIR, "info_coin_data.py"),
+        "INFO_MARKET_DATA":    os.path.join(NAVI_BASE_DIR, "info_market_data.py"),
+        "INFO_STRATEGY_BUILDER": os.path.join(NAVI_BASE_DIR, "strategy_builder.py"),
 
         "V6_SINGLE_RUN":       os.path.join(NAVI_BASE_DIR, "v6_single_run.py"),
         "V6_SINGLE_BACKTEST":  os.path.join(NAVI_BASE_DIR, "v6_single_backtest.py"),
@@ -155,6 +157,8 @@ def build_navigation():
 
     pSe1 = st.Page(paths["INFO_DASHBOARDS"], title="Dashboards", icon=":material/dashboard:")
     pSe2 = st.Page(paths["INFO_COIN_DATA"], title="Coin Data", icon=":material/monetization_on:")
+    pSe3 = st.Page(paths["INFO_MARKET_DATA"], title="Market Data", icon=":material/trending_up:")
+    pSe4 = st.Page(paths["INFO_STRATEGY_BUILDER"], title="Strategy Builder", icon=":material/code:")
 
     pS1 = st.Page(paths["V6_SINGLE_RUN"], title="Run", icon=":material/play_arrow:")
     pS2 = st.Page(paths["V6_SINGLE_BACKTEST"], title="Backtest", icon=":material/history:")
@@ -177,7 +181,7 @@ def build_navigation():
     if get_debuglog().logfile_exists():
         SystemPages.append(pM5)
                 
-    InfotmationPages = [pSe1, pSe2]
+    InfotmationPages = [pSe1, pSe2, pSe3, pSe4]
     v7Pages = [p71, p72, p73, p74]
     v6Pages = [p61, p62, p63]
     SinglePages = [pS1, pS2, pS3, pS4]
