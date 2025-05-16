@@ -29,7 +29,7 @@ with tabs[0]:
     with col3:
         days = st.number_input("Количество дней:", min_value=1, max_value=90, value=30, key="multi_days")
     
-    if st.button("Получить данные", type="primary"):
+    if st.button("Получить данные", type="primary", key="get_data_btn"):
         with st.spinner("Получение данных со всех бирж..."):
             try:
                 data = mdm.get_all_data_for_symbol(symbol, timeframe, days)
@@ -180,7 +180,7 @@ with tabs[2]:
     with col2:
         sync_timeframe = st.selectbox("Таймфрейм для синхронизации:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"], key="sync_timeframe")
     
-    if st.button("Синхронизировать данные", type="primary"):
+    if st.button("Синхронизировать данные", type="primary", key="sync_data_btn"):
         with st.spinner("Синхронизация данных между биржами..."):
             try:
                 results = mdm.synchronize_exchanges(sync_symbol, sync_timeframe)
@@ -251,7 +251,7 @@ with tabs[2]:
     )
     selected_symbols = [s.strip() for s in symbols_text.split("\n") if s.strip()] if symbols_text else None
     
-    if st.button("Обновить рыночные данные", type="primary"):
+    if st.button("Обновить рыночные данные", type="primary", key="update_data_btn"):
         if not selected_exchanges:
             st.error("Выберите хотя бы одну биржу")
         elif not selected_timeframes:
@@ -302,7 +302,7 @@ with tabs[3]:
     with col2:
         export_filename = st.text_input("Имя файла (оставьте пустым для автоматического):", "")
     
-    if st.button("Экспортировать в CSV", type="primary"):
+    if st.button("Экспортировать в CSV", type="primary", key="export_csv_btn"):
         with st.spinner("Экспорт данных..."):
             try:
                 filename = None if not export_filename else export_filename

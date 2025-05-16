@@ -6,7 +6,6 @@ from pathlib import Path, PurePath
 from time import sleep
 from io import TextIOWrapper
 from datetime import datetime
-import platform
 import traceback
 from pbgui_func import PBGDIR
 from Database import Database

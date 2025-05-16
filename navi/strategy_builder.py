@@ -283,7 +283,7 @@ with tabs[1]:
                 new_params["timeframes"] = selected_timeframes
         
         # Кнопка сохранения параметров
-        if st.button("Сохранить параметры", type="primary"):
+        if st.button("Сохранить параметры", type="primary", key="save_params_btn"):
             # Обновляем стратегию
             current_strategy.set_parameters(new_params)
             current_strategy.set_markets(selected_exchanges, selected_symbols, selected_timeframes, market_type)
@@ -333,7 +333,7 @@ with tabs[2]:
                         override_params[key] = st.text_input(f"{key}:", value=str(value))
         
         # Кнопка запуска бэктеста
-        if st.button("Запустить бэктест", type="primary"):
+        if st.button("Запустить бэктест", type="primary", key="run_backtest_btn"):
             with st.spinner("Выполняется бэктест..."):
                 # Форматируем даты
                 start_date_str = start_date.strftime("%Y-%m-%d")
@@ -444,7 +444,7 @@ with st.sidebar:
     
     if current_strategy:
         # Экспорт стратегии
-        if st.button("Экспортировать стратегию", use_container_width=True):
+        if st.button("Экспортировать стратегию", use_container_width=True, key="export_strategy_btn"):
             export_path = f"data/strategies/export_{current_strategy.name.replace(' ', '_')}.json"
             if sm.export_strategy(current_strategy.id, export_path):
                 st.success(f"Стратегия экспортирована в {export_path}")
@@ -455,13 +455,14 @@ with st.sidebar:
                         label="Скачать файл стратегии",
                         data=f.read(),
                         file_name=f"{current_strategy.name.replace(' ', '_')}.json",
-                        mime="application/json"
+                        mime="application/json",
+                        key="download_strategy_btn"
                     )
             else:
                 st.error("Ошибка при экспорте стратегии")
         
         # Удаление стратегии
-        if st.button("Удалить стратегию", use_container_width=True):
+        if st.button("Удалить стратегию", use_container_width=True, key="delete_strategy_btn"):
             if st.session_state.current_strategy_id:
                 if sm.delete_strategy(st.session_state.current_strategy_id):
                     st.session_state.current_strategy_id = None
@@ -503,4 +504,28 @@ with st.sidebar:
     - Бэктестинг стратегии
     - Анализ результатов
     - Экспорт/импорт стратегий
-    """) 
+    """)
+
+# Обновление списка пользователей при необходимости
+if st.sidebar.button("Обновить список пользователей", key="refresh_users_btn"):
+    mdm.refresh_exchanges()
+    st.sidebar.success("Список пользователей обновлен")
+
+# Статус подключения к биржам
+st.sidebar.divider()
+st.sidebar.subheader("Статус подключения к биржам")
+for exchange_name, exchange in mdm.exchanges.items():
+    if exchange.user and exchange.user.key != 'key':
+        st.sidebar.success(f"✅ {exchange_name} ({exchange.user.name})")
+    else:
+        st.sidebar.warning(f"⚠️ {exchange_name} (без API)")
+
+# Обновить все рыночные данные
+st.sidebar.divider()
+if st.sidebar.button("Обновить все рыночные данные", key="refresh_all_data_btn"):
+    with st.sidebar.status("Обновление данных..."):
+        try:
+            result = mdm.update_market_data()
+            st.sidebar.write("Обновление завершено")
+        except Exception as e:
+            st.sidebar.error(f"Ошибка: {str(e)}") 
