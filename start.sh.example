@@ -1,11 +1,35 @@
-#!/usr/bin/bash
-venv=~/software/venv_pbgui      #Path to python venv
-pbgui=~/software/pbgui          #path to pbgui installation
+#!/bin/bash
+# Скрипт для запуска PBGui на Ubuntu 22.04.5 LTS
+# Переименуйте этот файл в start.sh и сделайте его исполняемым: chmod +x start.sh
 
-source ${venv}/bin/activate
-cd ${pbgui}
-python PBRun.py &
-python PBRemote.py &
-python PBCoinData.py &
-python PBStat.py &
+# Настройки путей (измените на свои)
+VENV_PATH=~/software/venv_pbgui      # Путь к виртуальному окружению Python
+PBGUI_PATH=~/software/pbgui          # Путь к установке PBGui
+
+# Активация виртуального окружения
+source ${VENV_PATH}/bin/activate
+
+# Переход в директорию PBGui
+cd ${PBGUI_PATH}
+
+# Создание необходимых директорий, если они не существуют
+mkdir -p data/logs
+mkdir -p data/market_cache
+mkdir -p data/strategies
+mkdir -p data/pid
+
+# Запуск сервисов (в фоновом режиме)
+echo "Запуск PBData..."
 python PBData.py &
+
+# Ждем немного, чтобы сервисы успели запуститься
+sleep 2
+
+# Запуск основного приложения Streamlit
+echo "Запуск PBGui..."
+python -m streamlit run pbgui.py
+
+# Примечание: Когда вы остановите скрипт (Ctrl+C), 
+# фоновые процессы будут продолжать работать.
+# Чтобы остановить их, запустите команду:
+# pkill -f "python PBData.py"
