@@ -1,13 +1,25 @@
-# Установка PBGui на Linux/Ubuntu
+# Установка PBGui на Ubuntu 22.04.5 LTS
 
 ## Системные требования
+- Ubuntu 22.04.5 LTS
 - Python 3.8 или выше
 - Git
 - Доступ к командной строке с правами администратора
 
 ## Шаги установки
 
-### 1. Клонирование репозитория
+### 1. Подготовка системы
+
+```bash
+# Обновляем пакеты
+sudo apt update
+sudo apt upgrade -y
+
+# Устанавливаем необходимые пакеты
+sudo apt install -y python3-pip python3-venv git
+```
+
+### 2. Клонирование репозитория
 
 ```bash
 # Создаем директорию для проекта
@@ -19,7 +31,7 @@ git clone https://github.com/Pinman777/PBGui-TEST.git pbgui
 cd pbgui
 ```
 
-### 2. Создание виртуального окружения
+### 3. Создание виртуального окружения и установка зависимостей
 
 ```bash
 # Создаем виртуальное окружение для PBGui
@@ -28,31 +40,54 @@ python3 -m venv ~/software/venv_pbgui
 # Активируем виртуальное окружение
 source ~/software/venv_pbgui/bin/activate
 
+# Обновляем pip
+pip install --upgrade pip
+
 # Устанавливаем зависимости
 pip install -r requirements.txt
 ```
 
-### 3. Создание виртуального окружения для Passivbot v6 и v7 (по необходимости)
+### 4. Создание необходимых директорий
 
 ```bash
-# Для Passivbot v6
+# Создаем директории для данных и кэша
+mkdir -p data/logs
+mkdir -p data/market_cache
+mkdir -p data/strategies
+mkdir -p data/pid
+```
+
+### 5. Создание виртуальных окружений для Passivbot (при необходимости)
+
+```bash
+# Для Passivbot v6 (при необходимости)
 python3 -m venv ~/software/venv_pb6
 
-# Для Passivbot v7
+# Для Passivbot v7 (при необходимости)
 python3 -m venv ~/software/venv_pb7
 ```
 
-### 4. Настройка конфигурации
+### 6. Настройка конфигурации
 
-Отредактируйте файл `pbgui.ini` в корневой директории проекта:
+Создайте или отредактируйте файл `pbgui.ini` в корневой директории проекта:
+
+```bash
+# Копируем пример конфигурации, если файл не существует
+cp -n pbgui.ini.example pbgui.ini
+
+# Редактируем конфигурацию
+nano pbgui.ini
+```
+
+Внесите свои настройки в файл, например:
 
 ```ini
 [main]
 pbname = localhost
-pbdir = /home/user/software/pb6    # Путь к вашей директории Passivbot v6
-pbvenv = /home/user/software/venv_pb6/bin/python
-pb7dir = /home/user/software/pb7   # Путь к вашей директории Passivbot v7
-pb7venv = /home/user/software/venv_pb7/bin/python
+pbdir = /home/username/software/pb6    # Путь к директории Passivbot v6
+pbvenv = /home/username/software/venv_pb6/bin/python
+pb7dir = /home/username/software/pb7   # Путь к директории Passivbot v7
+pb7venv = /home/username/software/venv_pb7/bin/python
 
 [pbremote]
 bucket = 
@@ -61,14 +96,30 @@ bucket =
 api_key = 
 fetch_limit = 1000
 fetch_interval = 4
+
+[pbdata]
+fetch_users = []
 ```
 
-Замените пути на актуальные для вашей системы.
+Замените `username` на ваше имя пользователя.
 
-### 5. Запуск PBGui
+### 7. Настройка доступа из локальной сети
 
 ```bash
-# Активируем виртуальное окружение, если еще не активировано
+# Создаем конфигурацию для Streamlit
+mkdir -p ~/.streamlit
+cat > ~/.streamlit/config.toml << EOF
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = false
+EOF
+```
+
+### 8. Запуск PBGui
+
+```bash
+# Активируем виртуальное окружение (если не активировано)
 source ~/software/venv_pbgui/bin/activate
 
 # Запускаем PBGui
@@ -76,11 +127,11 @@ cd ~/software/pbgui
 python -m streamlit run pbgui.py
 ```
 
-По умолчанию, PBGui будет доступен по адресу http://localhost:8501
+По умолчанию PBGui будет доступен по адресу http://localhost:8501 и по адресу http://ваш-IP-адрес:8501 в локальной сети.
 
-### 6. Создание службы systemd (опционально)
+### 9. Создание службы systemd (для автозапуска)
 
-Для автоматического запуска PBGui при старте системы, создайте файл службы systemd:
+Создайте файл службы systemd для автоматического запуска PBGui при старте системы:
 
 ```bash
 sudo nano /etc/systemd/system/pbgui.service
@@ -120,30 +171,35 @@ sudo systemctl status pbgui.service
 
 ## Поиск и устранение неполадок
 
-### Доступ из локальной сети
-
-По умолчанию, Streamlit привязывается к localhost. Чтобы сделать интерфейс доступным из локальной сети, создайте файл конфигурации:
-
-```bash
-mkdir -p ~/.streamlit
-echo '[server]
-headless = true
-enableCORS = false
-enableXsrfProtection = false' > ~/.streamlit/config.toml
-```
-
 ### Проблемы с правами доступа
 
-Убедитесь, что у вас есть права на запись в директорию проекта:
+Если у вас возникают проблемы с правами доступа, выполните:
 
 ```bash
 sudo chown -R $USER:$USER ~/software/pbgui
+sudo chmod -R 755 ~/software/pbgui
 ```
 
-### Логи
+### Просмотр логов
 
 Логи PBGui хранятся в директории `data/logs`. Для просмотра логов:
 
 ```bash
 tail -f ~/software/pbgui/data/logs/debug.log
+```
+
+### Перезапуск службы
+
+Если вы внесли изменения в код или конфигурацию, перезапустите службу:
+
+```bash
+sudo systemctl restart pbgui.service
+```
+
+### Проверка статуса Streamlit
+
+Чтобы убедиться, что Streamlit работает правильно:
+
+```bash
+ps aux | grep streamlit
 ``` 
