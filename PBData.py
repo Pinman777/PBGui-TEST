@@ -36,12 +36,7 @@ class PBData():
     def run(self):
         if not self.is_running():
             cmd = [sys.executable, '-u', PurePath(f'{PBGDIR}/PBData.py')]
-            if platform.system() == "Windows":
-                creationflags = subprocess.DETACHED_PROCESS
-                creationflags |= subprocess.CREATE_NO_WINDOW
-                subprocess.Popen(cmd, stdout=None, stderr=None, cwd=PBGDIR, text=True, creationflags=creationflags)
-            else:
-                subprocess.Popen(cmd, stdout=None, stderr=None, cwd=PBGDIR, text=True, start_new_session=True)
+            subprocess.Popen(cmd, stdout=None, stderr=None, cwd=PBGDIR, text=True, start_new_session=True)
             count = 0
             while True:
                 if count > 5:

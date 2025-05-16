@@ -16,8 +16,8 @@ def get_market_data_manager():
     return MarketDataManager()
 
 @st.cache_resource
-def get_strategy_manager(mdm):
-    return StrategyManager(mdm)
+def get_strategy_manager(_mdm):
+    return StrategyManager(_mdm)
 
 mdm = get_market_data_manager()
 sm = get_strategy_manager(mdm)

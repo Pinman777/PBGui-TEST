@@ -25,9 +25,9 @@ with tabs[0]:
     with col1:
         symbol = st.text_input("Символ (например, BTCUSDT):", "BTCUSDT")
     with col2:
-        timeframe = st.selectbox("Таймфрейм:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"])
+        timeframe = st.selectbox("Таймфрейм:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"], key="multi_timeframe")
     with col3:
-        days = st.number_input("Количество дней:", min_value=1, max_value=90, value=30)
+        days = st.number_input("Количество дней:", min_value=1, max_value=90, value=30, key="multi_days")
     
     if st.button("Получить данные", type="primary"):
         with st.spinner("Получение данных со всех бирж..."):
@@ -178,7 +178,7 @@ with tabs[2]:
     with col1:
         sync_symbol = st.text_input("Символ для синхронизации:", "BTCUSDT")
     with col2:
-        sync_timeframe = st.selectbox("Таймфрейм для синхронизации:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"])
+        sync_timeframe = st.selectbox("Таймфрейм для синхронизации:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"], key="sync_timeframe")
     
     if st.button("Синхронизировать данные", type="primary"):
         with st.spinner("Синхронизация данных между биржами..."):
@@ -294,7 +294,7 @@ with tabs[3]:
     with col2:
         export_symbol = st.text_input("Символ:", "BTCUSDT")
     with col3:
-        export_timeframe = st.selectbox("Таймфрейм:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"])
+        export_timeframe = st.selectbox("Таймфрейм:", ["1m", "5m", "15m", "30m", "1h", "4h", "1d"], key="export_timeframe")
     
     col1, col2 = st.columns(2)
     with col1:
